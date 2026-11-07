@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoGradePredict | ML Mineral Property & Quality Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#ecfdf5', 100: '#d1fae5', 500: '#10b981', 600: '#059669', 700: '#047857', 900: '#064e3b' },
+                        cyanAccent: '#06b6d4', darkBg: '#0f172a', cardBg: '#1e293b', borderBg: '#334155'
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+    <header class="border-b border-borderBg bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div
+                    class="p-2 bg-gradient-to-tr from-brand-600 to-cyanAccent rounded-lg text-white font-bold text-xl glow-emerald">
+                    <i class="fa-solid fa-gem"></i>
+                </div>
+                <div>
+                    <span
+                        class="text-xl font-bold bg-gradient-to-r from-brand-500 to-cyanAccent bg-clip-text text-transparent">GeoGradePredict</span>
+                    <span class="hidden sm:inline-block text-xs text-slate-400 ml-2 border-l border-slate-700 pl-2">ML
+                        Mineral Analytics Platform</span>
+                </div>
+            </div>
+            <nav class="flex space-x-1 sm:space-x-4">
+                <button onclick="switchTab('overview')" id="btn-overview"
+                    class="tab-btn px-3 py-2 rounded-md text-sm font-medium text-brand-500 bg-slate-800">Overview</button>
+                <button onclick="switchTab('simulator')" id="btn-simulator"
+                    class="tab-btn px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800">Simulator</button>
+                <button onclick="switchTab('analytics')" id="btn-analytics"
+                    class="tab-btn px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800">Analytics</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <section id="tab-overview" class="space-y-8">
+            <div
+                class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border border-borderBg p-8 md:p-12 glow-emerald">
+                <div class="relative z-10 max-w-3xl">
+                    <span
+                        class="px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand-500 bg-brand-900/50 rounded-full border border-brand-500/30 mb-4 inline-block">Multi-Source
+                        Machine Learning Geological Intelligence</span>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">Mineral Property &
+                        Quality Prediction Engine</h1>
+                    <p class="text-slate-300 text-lg mb-6 leading-relaxed">
+                        GeoGradePredict fuses geological databases, world commodity metrics, company indexes, and
+                        mineral image identification for real-time property forecasting.
+                    </p>
+                    <button onclick="switchTab('simulator')"
+                        class="px-6 py-3 rounded-lg font-semibold bg-gradient-to-r from-brand-600 to-cyanAccent text-white hover:opacity-90 transition glow-emerald">
+                        Launch Live Simulator <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: SIMULATOR WITH IMAGE UPLOAD -->
+        <section id="tab-simulator" class="hidden space-y-8">
+            <div class="bg-cardBg border border-borderBg rounded-2xl p-6 md:p-8">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                    <i class="fa-solid fa-calculator text-brand-500 mr-3"></i> Mineral Grade & Property Simulator
+                </h2>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <div class="lg:col-span-7 space-y-6">
+
+                        <!-- NEW: Mineral Image Upload Feature -->
+                        <div
+                            class="bg-slate-900/70 border border-dashed border-slate-600 rounded-xl p-4 text-center hover:border-brand-500 transition">
+                            <label for="mineral-image" class="cursor-pointer block">
+                                <i class="fa-solid fa-cloud-arrow-up text-3xl text-brand-500 mb-2"></i>
+                                <span class="block text-sm font-semibold text-slate-200" id="file-label">Upload Mineral
+                                    Specimen Image (Optional)</span>
+                                <span class="text-xs text-slate-400">Supports PNG, JPG for visual identification</span>
+                            </label>
+                            <input type="file" id="mineral-image" accept="image/*" class="hidden"
+                                onchange="handleImageUpload(this)">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-sm font-medium text-slate-300 mb-2">
+                                <label for="density">Calculated Density (g/cm³)</label>
+                                <span id="val-density" class="text-brand-500 font-bold">5.28</span>
+                            </div>
+                            <input type="range" id="density" min="0.5" max="15.0" step="0.01" value="5.28"
+                                oninput="updateInputVal('density', this.value)"
+                                class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-500">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm font-medium text-slate-300 mb-2">
+                                <label for="gravity">Specific Gravity</label>
+                                <span id="val-gravity" class="text-brand-500 font-bold">4.10</span>
+                            </div>
+                            <input type="range" id="gravity" min="1.0" max="10.0" step="0.01" value="4.10"
+                                oninput="updateInputVal('gravity', this.value)"
+                                class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-500">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm font-medium text-slate-300 mb-2">
+                                <label for="purity">Chemical Purity %</label>
+                                <span id="val-purity" class="text-cyanAccent font-bold">82.5%</span>
+                            </div>
+                            <input type="range" id="purity" min="10" max="100" step="0.5" value="82.5"
+                                oninput="updateInputVal('purity', this.value, '%')"
+                                class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyanAccent">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm font-medium text-slate-300 mb-2">
+                                <label for="refractive">Refractive Index</label>
+                                <span id="val-refractive" class="text-cyanAccent font-bold">1.65</span>
+                            </div>
+                            <input type="range" id="refractive" min="1.0" max="3.5" step="0.01" value="1.65"
+                                oninput="updateInputVal('refractive', this.value)"
+                                class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyanAccent">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">Crystal System</label>
+                                <select id="crystal-system"
+                                    class="w-full bg-slate-800 border border-slate-700 text-slate-200 rounded-lg p-2.5">
+                                    <option value="Isometric/Cubic">Isometric / Cubic</option>
+                                    <option value="Hexagonal">Hexagonal</option>
+                                    <option value="Tetragonal">Tetragonal</option>
+                                    <option value="Orthorhombic" selected>Orthorhombic</option>
+                                    <option value="Monoclinic">Monoclinic</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">Extraction Region</label>
+                                <select id="region"
+                                    class="w-full bg-slate-800 border border-slate-700 text-slate-200 rounded-lg p-2.5">
+                                    <option value="Australia (Pilbara Basin)">Australia (Pilbara Basin)</option>
+                                    <option value="Canada (Shield Region)">Canada (Shield Region)</option>
+                                    <option value="China (Inner Mongolia)" selected>China (Inner Mongolia)</option>
+                                    <option value="Brazil (Carajás Mine)">Brazil (Carajás Mine)</option>
+                                    <option value="South Africa (Bushveld)">South Africa (Bushveld)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button onclick="runSimulation()"
+                            class="w-full py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-brand-600 via-brand-500 to-cyanAccent text-white hover:opacity-95 transition glow-emerald">
+                            <i class="fa-solid fa-microchip mr-2"></i> Run Machine Learning Prediction
+                        </button>
+                    </div>
+
+                    <div
+                        class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-xl p-6 flex flex-col justify-between items-center text-center">
+                        <div>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Inference
+                                Output</span>
+                            <h3 class="text-lg font-bold text-slate-200 mt-1">Predicted Mineral Quality Grade</h3>
+                        </div>
+                        <div class="my-8 space-y-4">
+                            <div class="text-6xl font-black text-white tracking-tight" id="predicted-score">5.82 <span
+                                    class="text-xl font-normal text-slate-400">/ 10</span></div>
+                            <div id="quality-badge"
+                                class="inline-block px-4 py-1.5 rounded-full text-sm font-extrabold uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                                Medium Quality</div>
+                        </div>
+                        <div
+                            class="w-full text-left bg-slate-800/60 rounded-lg p-4 text-xs space-y-2 border border-slate-700/50">
+                            <div class="flex justify-between"><span class="text-slate-400">Hardness Standard
+                                    (Mohs):</span><span id="m-hardness" class="text-slate-200 font-bold">5.82</span>
+                            </div>
+                            <div class="flex justify-between"><span class="text-slate-400">Estimated Recovery
+                                    Rate:</span><span id="m-recovery" class="text-slate-200 font-bold">78.4%</span>
+                            </div>
+                            <div class="flex justify-between"><span class="text-slate-400">Model Confidence:</span><span
+                                    class="text-brand-500 font-bold">98.4%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: ANALYTICS -->
+        <section id="tab-analytics" class="hidden space-y-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-cardBg border border-borderBg rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-white mb-4"><i
+                            class="fa-solid fa-chart-bar text-brand-500 mr-2"></i> XGBoost Feature Importance</h3>
+                    <div class="h-64"><canvas id="chart-importance"></canvas></div>
+                </div>
+                <div class="bg-cardBg border border-borderBg rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-white mb-4"><i
+                            class="fa-solid fa-chart-line text-cyanAccent mr-2"></i> Model Performance ($R^2$)</h3>
+                    <div class="h-64"><canvas id="chart-performance"></canvas></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-borderBg bg-slate-900/50 py-6 mt-12 text-center text-xs text-slate-500">
+        GeoGradePredict Analytics Platform &copy; 2026.
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
